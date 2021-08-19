@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta charset="utf-8"/>
+    <title>用户管理</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/assets/font-awesome/4.5.0/css/font-awesome.min.css"/>
+
+    <!-- page specific plugin styles -->
+
+    <!-- text fonts -->
+    <link rel="stylesheet" href="/assets/css/fonts.googleapis.com.css"/>
+
+    <!-- ace styles -->
+    <link rel="stylesheet" href="/assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style"/>
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="/assets/css/ace-part2.min.css" class="ace-main-stylesheet"/>
+    <![endif]-->
+    <link rel="stylesheet" href="/assets/css/ace-skins.min.css"/>
+    <link rel="stylesheet" href="/assets/css/ace-rtl.min.css"/>
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="/assets/css/ace-ie.min.css"/>
+    <![endif]-->
+
+    <!-- inline styles related to this page -->
+
+    <!-- ace settings handler -->
+    <script src="/assets/js/ace-extra.min.js"></script>
+
+    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+
+    <!--[if lte IE 8]>
+    <script src="/assets/js/html5shiv.min.js"></script>
+    <script src="/assets/js/respond.min.js"></script>
+    <![endif]-->
+
+    <!--[if !IE]> -->
+    <script src="/assets/js/jquery-2.1.4.min.js"></script>
+
+    <!-- <![endif]-->
+
+    <!--[if IE]>
+    <script src="/assets/js/jquery-1.11.3.min.js"></script>
+    <![endif]-->
+    <script src="/assets/js/bootstrap.min.js"></script>
+
+    <!-- page specific plugin scripts -->
+    <script src="/assets/js/jquery.dataTables.min.js"></script>
+    <script src="/assets/js/jquery.dataTables.bootstrap.min.js"></script>
+    <script src="/assets/js/dataTables.buttons.min.js"></script>
+    <script src="/assets/js/buttons.flash.min.js"></script>
+    <script src="/assets/js/buttons.html5.min.js"></script>
+    <script src="/assets/js/buttons.print.min.js"></script>
+    <script src="/assets/js/buttons.colVis.min.js"></script>
+    <script src="/assets/js/dataTables.select.min.js"></script>
+
+    <!-- ace scripts -->
+    <script src="/assets/js/ace-elements.min.js"></script>
+    <script src="/assets/js/ace.min.js"></script>
+
+    <script>
+        $(function (){
+            <!-- 全选 -->
+            $("#checkAll").change(function (){
+                $(":checkbox[name='ids']").prop("checked", $(this).prop("checked"));
+            });
+            <!-- 删除 -->
+            $("#btnDelete").click(function (){
+                if ($(":checked[name='ids']").length > 0) {
+                    $("#df").submit();
+                } else {
+                    alert("请选择要删除的记录！");
+                }
+            });
+        });
+    </script>
+
+</head>
+
+<body class="no-skin">
+
+<div th:replace="header :: navbar"></div>
+
+<div class="main-container ace-save-state" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.loadState('main-container')
+        } catch (e) {
+        }
+    </script>
+
+    <div th:replace="left :: sidebar"></div>
+
+    <div class="main-content">
+        <div class="main-content-inner">
+            <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                <ul class="breadcrumb">
+                    <li>
+                        <i class="ace-icon fa fa-home home-icon"></i>
+                        <a href="#">首页</a>
+                    </li>
+                    <li>
+                        <a href="#">用户</a>
+                    </li>
+                    <li class="active">用户管理</li>
+                </ul><!-- /.breadcrumb -->
+
+            </div>
+
+            <div class="page-content">
+
+                <div style="float: left; padding: 10px;">
+                    <form class="form-inline" id="qf" th:action="@{/admin/user/page}" method="post">
+                        <input type="hidden" name="pageNum" id="pageNum" th:value="${page.pageNum}">
+                        <input type="hidden" name="pageSize" id="pageSize" th:value="${page.pageSize}">
+
+                        <div class="form-group">
+                            <label for="username">姓名</label>
+                            <input type="text" name="username" class="form-control" id="username" th:value="${param.username}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">邮箱</label>
+                            <input type="text" name="email" class="form-control" id="email" th:value="${param.email}">
+                        </div>
+                        <input type="submit" value="查询" class="btn btn-sm btn-info"/>
+                        <input type="reset" value="重置" class="btn btn-sm btn-warning">
+                        <a class="btn btn-sm btn-success" th:href="@{/admin/user/toAdd}">添加</a>
+                        <button type="button" class="btn btn-sm btn-danger" id="btnDelete">删除</button>
+                    </form>
+                </div>
+
+                <form action="/admin/user/delete" method="post" id="df">
+                <table id="simple-table" class="table  table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" id="checkAll"></th>
+                        <th>编号</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>出生日期</th>
+                        <th>电话</th>
+                        <th>邮箱</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr th:each="u, status : ${page.list}" th:style="${status.even} ? 'background-color: #97D9E1'">
+                        <td><input type="checkbox" name="ids" th:value="${u.uid}"/></td>
+                        <td th:text="${u.uid}">Uid</td>
+                        <td th:text="${u.name}">name</td>
+                        <td th:text="${u.sex}">Sex</td>
+                        <td th:text="${#dates.format(u.birthday, 'yyyy-MM-dd')}">Birthday</td>
+                        <td th:text="${u.telephone}">Telephone</td>
+                        <td th:text="${u.email}">Email</td>
+                        <td>
+                            <div class="hidden-sm hidden-xs btn-group">
+                                <a class="btn btn-xs btn-info"
+                                        th:href="|/admin/user/toUpdate/${u.uid}">
+                                    <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                </a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-xs btn-info"
+                                        th:href="|/admin/user/delete/${u.uid}|">
+                                    <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                </form>
+
+                <div style="text-align: center">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li id="first">
+                                <a href="javascript:void(0);">
+                                    <span aria-hidden="true">首页</span>
+                                </a>
+                            </li>
+                            <li id="prev">
+                                <a href="javascript:void(0);" aria-label="Previous">
+                                    <span aria-hidden="true">上一页</span>
+                                </a>
+                            </li>
+
+                            <li name="pageNum" th:each="i : ${page.navigatepageNums}"
+                                th:class="${i == page.pageNum} ? 'active'">
+                                <a href="javascript:void(0);" th:text="${i}"></a>
+                            </li>
+
+                            <li id="next">
+                                <a href="javascript:void(0);" aria-label="Next">
+                                    <span aria-hidden="true">下一页</span>
+                                </a>
+                            </li>
+
+                            <li id="last">
+                                <a href="javascript:void(0);">
+                                    <span aria-hidden="true">末页</span>
+                                </a>
+                            </li>
+
+                            <span style="font-size: 20px;margin-left: 5px;"
+                                  th:text="|共条 ${page.total} 记录，共 ${page.pages} 页， 每页 ${page.pageSize} 行数|"></span>
+                            <select id="setRows">
+                                <option value="5" th:selected="${5 == page.pageSize}">5</option>
+                                <option value="10" th:selected="${10 == page.pageSize}">10</option>
+                                <option value="20" th:selected="${20 == page.pageSize}">20</option>
+                                <option value="30" th:selected="${30 == page.pageSize}">30</option>
+                            </select>
+                        </ul>
+                    </nav>
+                </div>
+
+				<script th:inline="javascript">
+                    $(function () {
+                        // 通过内联JS得到分页相关数据
+                        // 当前页
+                        let pageNum = [[${page.pageNum}]];
+                        // 总页数
+                        let pageCount = [[${page.pages}]];
+                        // True - 有下一页
+                        let hasNextPage = [[${page.hasNextPage}]];
+                        // True - 有上一页
+                        let hasPreviousPage = [[${page.hasPreviousPage}]];
+
+                        // 按钮事件
+                        $("#next").click(function () {
+                            if (!$("#next").hasClass("disabled")) {
+                                $("#pageNum").val(pageNum + 1);
+                                $("#qf").submit();
+                            }
+                        });
+
+                        $("#prev").click(function () {
+                            if (!$("#prev").hasClass("disabled")) {
+                                $("#pageNum").val(pageNum - 1);
+                                $("#qf").submit();
+                            }
+                        });
+
+                        $("#first").click(function () {
+                            if (!$("#first").hasClass("disabled")) {
+                                $("#pageNum").val(1);
+                                $("#qf").submit();
+                            }
+                        });
+
+                        $("#last").click(function () {
+                            if (!$("#last").hasClass("disabled")) {
+                                $("#pageNum").val(pageCount);
+                                $("#qf").submit();
+                            }
+                        });
+
+                        // 点击页面跳转
+                        $("li[name = 'pageNum']").click(function () {
+                            if (!$(this).hasClass("active")) {
+                                $("#pageNum").val($(this).children("a").html());
+                                $("#qf").submit();
+                            }
+                        });
+
+                        // 设置每页行数
+                        $("#setRows").change(function (){
+                            $("#pageSize").val($(this).val());
+                            $("#pageNum").val(1);
+                            $("#qf").submit();
+                        });
+
+                        // 控制按钮状态
+                        if (!hasNextPage) {
+                            $("#last").addClass("disabled");
+                            $("#next").addClass("disabled");
+                        }
+
+                        if (!hasPreviousPage) {
+                            $("#first").addClass("disabled");
+                            $("#prev").addClass("disabled");
+                        }
+                    });
+                </script>
+
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+
+</div><!-- /.main-container -->
+
+</body>
+</html>

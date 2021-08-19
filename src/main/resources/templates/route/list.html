@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta charset="utf-8"/>
+    <title>旅游线路管理</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/assets/font-awesome/4.5.0/css/font-awesome.min.css"/>
+
+    <!-- text fonts -->
+    <link rel="stylesheet" href="/assets/css/fonts.googleapis.com.css"/>
+
+    <!-- ace styles -->
+    <link rel="stylesheet" href="/assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style"/>
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="/assets/css/ace-part2.min.css" class="ace-main-stylesheet"/>
+    <![endif]-->
+    <link rel="stylesheet" href="/assets/css/ace-skins.min.css"/>
+    <link rel="stylesheet" href="/assets/css/ace-rtl.min.css"/>
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="/assets/css/ace-ie.min.css"/>
+    <![endif]-->
+
+    <!-- inline styles related to this page -->
+
+    <!-- ace settings handler -->
+    <script src="/assets/js/ace-extra.min.js"></script>
+
+    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+
+    <!--[if lte IE 8]>
+    <script src="/assets/js/html5shiv.min.js"></script>
+    <script src="/assets/js/respond.min.js"></script>
+    <![endif]-->
+
+    <!--[if !IE]> -->
+    <script src="/assets/js/jquery-2.1.4.min.js"></script>
+
+    <!-- <![endif]-->
+
+    <!--[if IE]>
+    <script src="/assets/js/jquery-1.11.3.min.js"></script>
+    <![endif]-->
+    <script src="/assets/js/bootstrap.min.js"></script>
+
+    <!-- page specific plugin scripts -->
+    <script src="/assets/js/jquery.dataTables.min.js"></script>
+    <script src="/assets/js/jquery.dataTables.bootstrap.min.js"></script>
+    <script src="/assets/js/dataTables.buttons.min.js"></script>
+    <script src="/assets/js/buttons.flash.min.js"></script>
+    <script src="/assets/js/buttons.html5.min.js"></script>
+    <script src="/assets/js/buttons.print.min.js"></script>
+    <script src="/assets/js/buttons.colVis.min.js"></script>
+    <script src="/assets/js/dataTables.select.min.js"></script>
+
+    <!-- ace scripts -->
+    <script src="/assets/js/ace-elements.min.js"></script>
+    <script src="/assets/js/ace.min.js"></script>
+
+</head>
+
+<body class="no-skin">
+
+<div th:replace="header :: navbar"></div>
+
+<div class="main-container ace-save-state" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.loadState('main-container')
+        } catch (e) {
+        }
+    </script>
+
+    <div th:replace="left :: sidebar"></div>
+
+    <div class="main-content">
+        <div class="main-content-inner">
+            <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                <ul class="breadcrumb">
+                    <li>
+                        <i class="ace-icon fa fa-home home-icon"></i>
+                        <a href="#">首页</a>
+                    </li>
+
+                    <li>
+                        <a href="#">用户</a>
+                    </li>
+                    <li class="active">用户管理</li>
+                </ul><!-- /.breadcrumb -->
+
+            </div>
+
+            <div class="page-content">
+
+                <div style="float: left; padding: 10px;">
+                    <form class="form-inline" id="qf" action="/admin/route/page" method="post">
+                        <input type="hidden" name="pageNum" th:value="${page.pageNum}" id="pageNum">
+                        <input type="hidden" name="pageSize" th:value="${page.pageSize}" id="pageSize">
+
+                        <div class="form-group">
+                            <label for="rname">线路名称</label>
+                            <input type="text" name="rname" class="form-control" id="rname" th:value="${param.rname}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="routeIntroduce">线路介绍</label>
+                            <input type="text" name="routeIntroduce" class="form-control" id="routeIntroduce"
+                                   th:value="${param.email}">
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="cid">所属分类：</label>
+                            <select class="form-control" id="cid" name="cid">
+                                <option value="">全部</option>
+								<!-- TODO 回显数据 -->
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cid">旅游公司：</label>
+                            <select class="form-control" id="sid" name="sid">
+                                <option value="">全部</option>
+								<!-- TODO 回显数据 -->
+                            </select>
+                        </div>
+
+
+                        <button type="submit" class="btn btn-sm btn-default">查询</button>
+                        <button type="button" class="btn btn-sm btn-default"
+                                onclick="location.href='/admin/route/toadd'">添加
+                        </button>
+                    </form>
+                </div>
+
+
+                <table id="simple-table" class="table  table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" id="checkAll"></th>
+                        <th>编号</th>
+                        <th>线路名称</th>
+                        <th>所属分类</th>
+                        <th>旅游公司</th>
+                        <th>价格</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr th:each="u: ${page.list}">
+                        <td><input type="checkbox" name="ids" th:value="${u.rid}"></td>
+                        <td th:text="${u.rid}"></td>
+						<!-- TODO 30个字符串以上显示... -->
+                        <td></td>
+                        <td th:text="${u.category.cname}"></td>
+                        <td th:text="${u.seller.sname}"></td>
+                        <td th:text="${u.price}"></td>
+                        <td>
+
+                            <div class="hidden-sm hidden-xs btn-group">
+                                <button class="btn btn-xs btn-info"
+                                        th:onclick="|location.href = '/admin/route/toupdate?id=${u.rid}'|">
+                                    <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                </button>
+
+                                <button class="btn btn-xs btn-info"
+                                        th:onclick="|location.href = '/admin/route/delete?id=${u.rid}'|">
+                                    <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                </button>
+
+                                <button class="btn btn-xs btn-success"
+                                        th:onclick="|location.href = '/admin/route/toimage?id=${u.rid}'|">
+                                    <i class="ace-icon fa fa-image bigger-120"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+                <div>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li id="first">
+                                <a href="javascript:void(0);">
+                                    <span aria-hidden="true">首页</span>
+                                </a>
+                            </li>
+                            <li id="prev">
+                                <a href="javascript:void(0);" aria-label="Previous">
+                                    <span aria-hidden="true">上一页</span>
+                                </a>
+                            </li>
+                            <li name="pageNum" th:each="i : ${page.navigatepageNums}"
+                                th:class="${i} == ${page.pageNum} ? 'active'"><a href="javascript:void(0);"
+                                                                                 th:text="${i}"></a></li>
+
+                            <li id="next">
+                                <a href="javascript:void(0);" aria-label="Next">
+                                    <span aria-hidden="true">下一页</span>
+                                </a>
+                            </li>
+
+                            <li id="last">
+                                <a href="javascript:void(0);">
+                                    <span aria-hidden="true">末页</span>
+                                </a>
+                            </li>
+
+                            <span style="font-size: 20px;margin-left: 5px;"
+                                  th:text="|共条 ${page.total} 记录，共${page.pages}页， 每页行数|">
+                                            </span>
+                            <select id="setRows">
+                                <option value="5" th:selected="5 == ${page.pageSize}">5</option>
+                                <option value="10" th:selected="10 == ${page.pageSize}">10</option>
+                                <option value="20" th:selected="20 == ${page.pageSize}">20</option>
+                                <option value="30" th:selected="30 == ${page.pageSize}">30</option>
+                            </select>
+
+                        </ul>
+                    </nav>
+                </div>
+					<!-- TODO 分页js -->
+				
+	
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+
+</div><!-- /.main-container -->
+
+</body>
+</html>

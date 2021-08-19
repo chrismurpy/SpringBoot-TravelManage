@@ -1,0 +1,29 @@
+server:
+  port: 8080
+  servlet:
+    # 项目的上下文地址
+    context-path: /
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/Springboot_Travel
+    username: murphy
+    password: xmf123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      idle-timeout: 60000
+      maximum-pool-size: 30
+      minimum-idle: 10
+  thymeleaf:
+    cache: false
+mybatis-plus:
+  # 加载映射文件
+  mapper-locations: classpath:/mybatis/*.xml
+  # 别名搜索的包
+  type-aliases-package: com.murphy.domain
+  configuration:
+    # 懒加载
+    lazy-loading-enabled: true
+    # 关闭积极懒加载
+    aggressive-lazy-loading: false
+

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.murphy.dao.UserDao">
+    <sql id="selectAll">
+        SELECT * FROM Springboot_Travel.tab_user as u
+    </sql>
+
+    <select id="selectByNameAndEmail" resultType="user">
+        <include refid="selectAll"/>
+        <where>
+            <if test="username != null">
+                u.username like '%${username}%'
+            </if>
+            <if test="email != null">
+                and u.email like '%${email}%'
+            </if>
+        </where>
+    </select>
+</mapper>
