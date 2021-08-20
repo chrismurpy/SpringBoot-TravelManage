@@ -96,26 +96,24 @@
                     <li>
                         <a href="#">用户</a>
                     </li>
-                    <li class="active">用户管理</li>
+                    <li class="active">线路分类</li>
                 </ul><!-- /.breadcrumb -->
 
             </div>
 
             <div class="page-content">
-					<!-- TODO 回显数据 -->
-
-                <form action="/admin/category/doupdate" method="post" >
+                <form action="/admin/category/update" method="post" th:object="${category}">
                     <input type="hidden" name="cid" th:value="*{cid}">
                     <div class="form-group">
                         <label for="cname">分类名称：</label>
-                        <input type="text" class="form-control" id="cname" name="cname" placeholder="请输入分类名称"
-                               >
+                        <input type="text" class="form-control" id="cname" name="cname" th:value="*{cname}"
+                               placeholder="请输入分类名称">
                     </div>
 
                     <div class="form-group" style="text-align: center">
-                        <input class="btn btn-primary" type="submit" value="提交"/>
-                        <input class="btn btn-default" type="reset" value="重置"/>
-                        <input class="btn btn-default" type="button" value="返回"/>
+                        <input class="btn btn-success" type="submit" value="提交"/>
+                        <input class="btn btn-danger" type="reset" value="重置"/>
+                        <a class="btn btn-default" th:href="@{/admin/category/list}">返回</a>
                     </div>
                 </form>
 

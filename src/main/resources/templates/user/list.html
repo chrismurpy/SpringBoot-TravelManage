@@ -66,13 +66,13 @@
     <script src="/assets/js/ace.min.js"></script>
 
     <script>
-        $(function (){
+        $(function () {
             <!-- 全选 -->
-            $("#checkAll").change(function (){
+            $("#checkAll").change(function () {
                 $(":checkbox[name='ids']").prop("checked", $(this).prop("checked"));
             });
             <!-- 删除 -->
-            $("#btnDelete").click(function (){
+            $("#btnDelete").click(function () {
                 if ($(":checked[name='ids']").length > 0) {
                     $("#df").submit();
                 } else {
@@ -123,7 +123,8 @@
 
                         <div class="form-group">
                             <label for="username">姓名</label>
-                            <input type="text" name="username" class="form-control" id="username" th:value="${param.username}">
+                            <input type="text" name="username" class="form-control" id="username"
+                                   th:value="${param.username}">
                         </div>
 
                         <div class="form-group">
@@ -138,46 +139,46 @@
                 </div>
 
                 <form action="/admin/user/delete" method="post" id="df">
-                <table id="simple-table" class="table  table-bordered table-hover">
-                    <thead>
-                    <tr>
-                        <th><input type="checkbox" id="checkAll"></th>
-                        <th>编号</th>
-                        <th>姓名</th>
-                        <th>性别</th>
-                        <th>出生日期</th>
-                        <th>电话</th>
-                        <th>邮箱</th>
-                        <th>操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
+                    <table id="simple-table" class="table  table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th><input type="checkbox" id="checkAll"></th>
+                            <th>编号</th>
+                            <th>姓名</th>
+                            <th>性别</th>
+                            <th>出生日期</th>
+                            <th>电话</th>
+                            <th>邮箱</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
 
-                    <tr th:each="u, status : ${page.list}" th:style="${status.even} ? 'background-color: #97D9E1'">
-                        <td><input type="checkbox" name="ids" th:value="${u.uid}"/></td>
-                        <td th:text="${u.uid}">Uid</td>
-                        <td th:text="${u.name}">name</td>
-                        <td th:text="${u.sex}">Sex</td>
-                        <td th:text="${#dates.format(u.birthday, 'yyyy-MM-dd')}">Birthday</td>
-                        <td th:text="${u.telephone}">Telephone</td>
-                        <td th:text="${u.email}">Email</td>
-                        <td>
-                            <div class="hidden-sm hidden-xs btn-group">
-                                <a class="btn btn-xs btn-info"
-                                        th:href="|/admin/user/toUpdate/${u.uid}">
-                                    <i class="ace-icon fa fa-pencil bigger-120"></i>
-                                </a>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <a class="btn btn-xs btn-info"
-                                        th:href="|/admin/user/delete/${u.uid}|">
-                                    <i class="ace-icon fa fa-trash-o bigger-120"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
+                        <tr th:each="u, status : ${page.list}" th:style="${status.even} ? 'background-color: #97D9E1'">
+                            <td><input type="checkbox" name="ids" th:value="${u.uid}"/></td>
+                            <td th:text="${u.uid}">Uid</td>
+                            <td th:text="${u.name}">name</td>
+                            <td th:text="${u.sex}">Sex</td>
+                            <td th:text="${#dates.format(u.birthday, 'yyyy-MM-dd')}">Birthday</td>
+                            <td th:text="${u.telephone}">Telephone</td>
+                            <td th:text="${u.email}">Email</td>
+                            <td>
+                                <div class="hidden-sm hidden-xs btn-group">
+                                    <a class="btn btn-xs btn-info"
+                                       th:href="|/admin/user/toUpdate/${u.uid}">
+                                        <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                    </a>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="btn btn-xs btn-info"
+                                       th:href="|/admin/user/delete/${u.uid}|">
+                                        <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
 
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
                 </form>
 
                 <div style="text-align: center">
@@ -223,7 +224,7 @@
                     </nav>
                 </div>
 
-				<script th:inline="javascript">
+                <script th:inline="javascript">
                     $(function () {
                         // 通过内联JS得到分页相关数据
                         // 当前页
@@ -273,7 +274,7 @@
                         });
 
                         // 设置每页行数
-                        $("#setRows").change(function (){
+                        $("#setRows").change(function () {
                             $("#pageSize").val($(this).val());
                             $("#pageNum").val(1);
                             $("#qf").submit();

@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta charset="utf-8" />
-    <title>用户管理</title>
+    <title>旅游公司</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
@@ -92,14 +92,14 @@
                     <li>
                         <a href="#">用户</a>
                     </li>
-                    <li class="active">用户管理</li>
+                    <li class="active">旅游公司</li>
                 </ul><!-- /.breadcrumb -->
 
             </div>
 
             <div class="page-content">
 
-                <form action="/admin/seller/doadd" method="post">
+                <form action="/admin/seller/add" method="post">
                     <div class="form-group">
                         <label for="sname">商家名称：</label>
                         <input type="text" class="form-control" id="sname" name="sname" placeholder="请输入商家名称">
@@ -111,13 +111,13 @@
 
                     <div class="form-group">
                         <label for="address">商家地址：</label>
-                        <input type="text" class="form-control" id="address" name="address" placeholder="请输入商家电话" >
+                        <input type="text" class="form-control" id="address" name="address" placeholder="请输入商家地址" >
                     </div>
 
                     <div class="form-group" style="text-align: center">
-                        <input class="btn btn-primary" type="submit" value="提交" />
-                        <input class="btn btn-default" type="reset" value="重置" />
-                        <input class="btn btn-default" type="button" value="返回" />
+                        <input class="btn btn-success" type="submit" value="提交" />
+                        <input class="btn btn-danger" type="reset" value="重置" />
+                        <a class="btn btn-default" th:href="@{/admin/seller/page}">返回</a>
                     </div>
                 </form>
 

@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <meta charset="utf-8"/>
-    <title>用户管理</title>
+    <title>旅游公司</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
@@ -65,6 +65,22 @@
     <script src="/assets/js/ace-elements.min.js"></script>
     <script src="/assets/js/ace.min.js"></script>
 
+    <script>
+        $(function () {
+            <!-- 全选 -->
+            $("#checkAll").change(function () {
+                $(":checkbox[name='ids']").prop("checked", $(this).prop("checked"));
+            });
+            <!-- 删除 -->
+            $("#btnDelete").click(function () {
+                if ($(":checked[name='ids']").length > 0) {
+                    $("#df").submit();
+                } else {
+                    alert("请选择要删除的记录！");
+                }
+            });
+        });
+    </script>
 </head>
 
 <body class="no-skin">
@@ -92,7 +108,7 @@
                     <li>
                         <a href="#">用户</a>
                     </li>
-                    <li class="active">用户管理</li>
+                    <li class="active">旅游公司</li>
                 </ul><!-- /.breadcrumb -->
 
             </div>
@@ -100,9 +116,9 @@
             <div class="page-content">
 
                 <div style="float: left; padding: 10px;">
-                    <form class="form-inline" id="qf" action="/admin/seller/page" method="post">
-                        <input type="hidden" name="pageNum" th:value="${page.pageNum}" id="pageNum">
-                        <input type="hidden" name="pageSize" th:value="${page.pageSize}" id="pageSize">
+                    <form class="form-inline" id="qf" th:action="@{/admin/seller/page}" method="post">
+                        <input type="hidden" name="pageNum" id="pageNum" th:value="${page.pageNum}">
+                        <input type="hidden" name="pageSize" id="pageSize" th:value="${page.pageSize}">
 
                         <div class="form-group">
                             <label for="sname">商家名称</label>
@@ -114,31 +130,49 @@
                             <input type="text" name="address" class="form-control" id="address"
                                    th:value="${param.address}">
                         </div>
-                        <button type="submit" class="btn btn-sm btn-default">查询</button>
-                        <button type="button" class="btn btn-sm btn-default"
-                                onclick="location.href='/admin/seller/toadd'">添加
-                        </button>
+                        <input type="submit" value="查询" class="btn btn-sm btn-info"/>
+                        <input type="reset" value="重置" class="btn btn-sm btn-warning">
+                        <a class="btn btn-sm btn-success" th:href="@{/admin/seller/toAdd}">添加</a>
+                        <button type="button" class="btn btn-sm btn-danger" id="btnDelete">删除</button>
                     </form>
                 </div>
 
+                <form action="/admin/seller/delete" method="post" id="df">
+                    <table id="simple-table" class="table  table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th><input type="checkbox" id="checkAll"></th>
+                            <th>编号</th>
+                            <th>商家名称</th>
+                            <th>商家电话</th>
+                            <th>商家地址</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
 
-                <table id="simple-table" class="table  table-bordered table-hover">
-                    <thead>
-                    <tr>
-                        <th><input type="checkbox" id="checkAll"></th>
-                        <th>编号</th>
-                        <th>商家名称</th>
-                        <th>商家电话</th>
-                        <th>商家地址</th>
-                        <th>操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
+                        <tr th:each="s, status : ${page.list}" th:style="${status.even} ? 'background-color: #97D9E1'">
+                            <td><input type="checkbox" name="ids" th:value="${s.sid}"/></td>
+                            <td th:text="${s.sid}">Sid</td>
+                            <td th:text="${s.sname}">Sname</td>
+                            <td th:text="${s.consphone}">Consphone</td>
+                            <td th:text="${s.address}">Address</td>
+                            <td>
+                                <div class="hidden-sm hidden-xs btn-group">
+                                    <a class="btn btn-xs btn-info" th:href="|/admin/seller/toUpdate/${s.sid}|">
+                                        <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                    </a>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="btn btn-xs btn-info" th:href="|/admin/seller/delete/${s.sid}|">
+                                        <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
 
-					<!-- TODO 回显数据 -->
-	
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </form>
 
                 <div>
                     <nav aria-label="Page navigation">
@@ -183,7 +217,74 @@
                     </nav>
                 </div>
 
-					<!-- TODO 分页 -->
+                <script th:inline="javascript">
+                    $(function () {
+                        // 通过内联JS得到分页相关数据
+                        // 当前页
+                        let pageNum = [[${page.pageNum}]];
+                        // 总页数
+                        let pageCount = [[${page.pages}]];
+                        // True - 有下一页
+                        let hasNextPage = [[${page.hasNextPage}]];
+                        // True - 有上一页
+                        let hasPreviousPage = [[${page.hasPreviousPage}]];
+
+                        // 按钮事件
+                        $("#next").click(function () {
+                            if (!$("#next").hasClass("disabled")) {
+                                $("#pageNum").val(pageNum + 1);
+                                $("#qf").submit();
+                            }
+                        });
+
+                        $("#prev").click(function () {
+                            if (!$("#prev").hasClass("disabled")) {
+                                $("#pageNum").val(pageNum - 1);
+                                $("#qf").submit();
+                            }
+                        });
+
+                        $("#first").click(function () {
+                            if (!$("#first").hasClass("disabled")) {
+                                $("#pageNum").val(1);
+                                $("#qf").submit();
+                            }
+                        });
+
+                        $("#last").click(function () {
+                            if (!$("#last").hasClass("disabled")) {
+                                $("#pageNum").val(pageCount);
+                                $("#qf").submit();
+                            }
+                        });
+
+                        // 点击页面跳转
+                        $("li[name = 'pageNum']").click(function () {
+                            if (!$(this).hasClass("active")) {
+                                $("#pageNum").val($(this).children("a").html());
+                                $("#qf").submit();
+                            }
+                        });
+
+                        // 设置每页行数
+                        $("#setRows").change(function () {
+                            $("#pageSize").val($(this).val());
+                            $("#pageNum").val(1);
+                            $("#qf").submit();
+                        });
+
+                        // 控制按钮状态
+                        if (!hasNextPage) {
+                            $("#last").addClass("disabled");
+                            $("#next").addClass("disabled");
+                        }
+
+                        if (!hasPreviousPage) {
+                            $("#first").addClass("disabled");
+                            $("#prev").addClass("disabled");
+                        }
+                    });
+                </script>
 
             </div><!-- /.page-content -->
         </div>
