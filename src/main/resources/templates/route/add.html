@@ -2,32 +2,32 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta charset="utf-8"/>
     <title>添加线路</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
     <!-- bootstrap & fontawesome -->
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/assets/font-awesome/4.5.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/assets/font-awesome/4.5.0/css/font-awesome.min.css"/>
 
     <!-- page specific plugin styles -->
 
     <!-- text fonts -->
-    <link rel="stylesheet" href="/assets/css/fonts.googleapis.com.css" />
+    <link rel="stylesheet" href="/assets/css/fonts.googleapis.com.css"/>
 
     <!-- ace styles -->
-    <link rel="stylesheet" href="/assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
+    <link rel="stylesheet" href="/assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style"/>
 
     <!--[if lte IE 9]>
-    <link rel="stylesheet" href="/assets/css/ace-part2.min.css" class="ace-main-stylesheet" />
+    <link rel="stylesheet" href="/assets/css/ace-part2.min.css" class="ace-main-stylesheet"/>
     <![endif]-->
-    <link rel="stylesheet" href="/assets/css/ace-skins.min.css" />
-    <link rel="stylesheet" href="/assets/css/ace-rtl.min.css" />
+    <link rel="stylesheet" href="/assets/css/ace-skins.min.css"/>
+    <link rel="stylesheet" href="/assets/css/ace-rtl.min.css"/>
 
     <!--[if lte IE 9]>
-    <link rel="stylesheet" href="/assets/css/ace-ie.min.css" />
+    <link rel="stylesheet" href="/assets/css/ace-ie.min.css"/>
     <![endif]-->
 
     <!-- inline styles related to this page -->
@@ -68,7 +68,7 @@
 
     <script language="javascript" type="text/javascript" src="/js/My97DatePicker/WdatePicker.js"></script>
 
-    <link href="/js/fileinput/css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="/js/fileinput/css/fileinput.css" media="all" rel="stylesheet" type="text/css"/>
     <script src="/js/fileinput/js/fileinput.js" type="text/javascript"></script>
     <script src="/js/fileinput/js/fileinput_locale_zh.js" type="text/javascript"></script>
 
@@ -80,7 +80,10 @@
 
 <div class="main-container ace-save-state" id="main-container">
     <script type="text/javascript">
-        try{ace.settings.loadState('main-container')}catch(e){}
+        try {
+            ace.settings.loadState('main-container')
+        } catch (e) {
+        }
     </script>
 
     <div th:replace="left :: sidebar"></div>
@@ -97,14 +100,13 @@
                     <li>
                         <a href="#">用户</a>
                     </li>
-                    <li class="active">用户管理</li>
+                    <li class="active">旅游线路管理</li>
                 </ul><!-- /.breadcrumb -->
 
             </div>
 
             <div class="page-content">
-				<!-- TODO 文件上传表单设置 -->
-                <form >
+                <form action="/admin/route/add" enctype="multipart/form-data" method="post">
                     <div class="form-group">
                         <label for="rname">线路名称：</label>
                         <input type="text" class="form-control" id="rname" name="rname" placeholder="请输入线路名称">
@@ -112,20 +114,21 @@
 
                     <div class="form-group">
                         <label for="routeIntroduce">线路介绍：</label>
-                        <input type="text" class="form-control" id="routeIntroduce" name="routeIntroduce" placeholder="请输入线路介绍">
+                        <input type="text" class="form-control" id="routeIntroduce" name="routeIntroduce"
+                               placeholder="请输入线路介绍">
                     </div>
 
                     <div class="form-group">
                         <label for="cid">所属分类：</label>
                         <select class="form-control" id="cid" name="cid">
-						<!-- TODO 回显数据 -->
+						    <option th:each="c : ${categories}" th:value="${c.cid}" th:text="${c.cname}"></option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label for="cid">旅游公司：</label>
                         <select class="form-control" id="sid" name="sid">
-						<!-- TODO 回显数据-->
+                            <option th:each="s : ${sellers}" th:value="${s.sid}" th:text="${s.sname}"></option>
                         </select>
                     </div>
 
@@ -136,21 +139,26 @@
 
                     <div class="form-group">
                         <label for="rimageFile">缩略图：</label>
-						<!-- TODO 转换成fileinput -->
-                        <input id="rimageFile" name="rimageFile" type="file" >
+                        <!-- 转换成FileInput - 方式一：class="file" -->
+                        <input id="rimageFile" name="rimageFile" type="file">
+                        <script>
+                            $(function (){
+                                $("#rimageFile").fileinput({
+
+                                });
+                            });
+                        </script>
                     </div>
 
                     <div class="form-group" style="text-align: center">
-                        <input class="btn btn-primary" type="submit" value="提交" />
-                        <input class="btn btn-default" type="reset" value="重置" />
-                        <input class="btn btn-default" type="button" value="返回" />
+                        <input class="btn btn-success" type="submit" value="提交"/>
+                        <input class="btn btn-danger" type="reset" value="重置"/>
+                        <a class="btn btn-default" th:href="@{/admin/route/page}">返回</a>
                     </div>
                 </form>
-
             </div><!-- /.page-content -->
         </div>
     </div><!-- /.main-content -->
-
 </div><!-- /.main-container -->
 
 </body>

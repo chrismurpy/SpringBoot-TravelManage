@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.murphy.dao.RouteDao">
+    <sql id="selectRoute">
+        select * from Springboot_Travel.tab_route
+    </sql>
+
+    <select id="find" resultMap="routeMap">
+        <include refid="selectRoute"/>
+        <where>
+            <if test="cid != null">
+                cid = #{cid}
+            </if>
+            <if test="sid != null">
+                and sid = #{sid}
+            </if>
+            <if test="rname != null and rname.trim() != ''">
+                and rname like '%${rname}%'
+            </if>
+            <if test="routeIntroduce != null and routeIntroduce.trim() != ''">
+                and routeIntroduce like '%${routeIntroduce}%'
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="routeMap" type="route">
+        <id column="rid" property="rid"></id>
+        <association property="category" javaType="category" select="com.murphy.dao.CategoryDao.findById" column="cid">
+            <id column="cid" property="cid"></id>
+        </association>
+        <association property="seller" javaType="seller" select="com.murphy.dao.SellerDao.findById" column="sid">
+            <id column="sid" property="sid"></id>
+        </association>
+        <collection property="routeImgList" javaType="java.util.List"
+                    ofType="RouteImg" select="com.murphy.dao.RouteImgDao.findByRid" column="rid">
+            <id column="rgid" property="rgid"></id>
+        </collection>
+    </resultMap>
+
+    <select id="findById" parameterType="int" resultMap="routeMap">
+        <include refid="selectRoute"></include>
+        where rid = #{rid}
+    </select>
+</mapper>

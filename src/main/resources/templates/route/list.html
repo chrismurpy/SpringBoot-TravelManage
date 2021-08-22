@@ -62,7 +62,22 @@
     <!-- ace scripts -->
     <script src="/assets/js/ace-elements.min.js"></script>
     <script src="/assets/js/ace.min.js"></script>
-
+    <script>
+        $(function () {
+            <!-- 全选 -->
+            $("#checkAll").change(function () {
+                $(":checkbox[name='ids']").prop("checked", $(this).prop("checked"));
+            });
+            <!-- 删除 -->
+            $("#btnDelete").click(function () {
+                if ($(":checked[name='ids']").length > 0) {
+                    $("#df").submit();
+                } else {
+                    alert("请选择要删除的记录！");
+                }
+            });
+        });
+    </script>
 </head>
 
 <body class="no-skin">
@@ -91,7 +106,7 @@
                     <li>
                         <a href="#">用户</a>
                     </li>
-                    <li class="active">用户管理</li>
+                    <li class="active">旅游线路管理</li>
                 </ul><!-- /.breadcrumb -->
 
             </div>
@@ -111,7 +126,7 @@
                         <div class="form-group">
                             <label for="routeIntroduce">线路介绍</label>
                             <input type="text" name="routeIntroduce" class="form-control" id="routeIntroduce"
-                                   th:value="${param.email}">
+                                   th:value="${param.routeIntroduce}">
                         </div>
 
 
@@ -119,7 +134,8 @@
                             <label for="cid">所属分类：</label>
                             <select class="form-control" id="cid" name="cid">
                                 <option value="">全部</option>
-								<!-- TODO 回显数据 -->
+                                <option th:each="c : ${categories}" th:value="${c.cid}" th:text="${c.cname}"
+                                        th:selected="${c.cid} + '' == ${#strings.trim(param.cid)}"></option>
                             </select>
                         </div>
 
@@ -127,64 +143,61 @@
                             <label for="cid">旅游公司：</label>
                             <select class="form-control" id="sid" name="sid">
                                 <option value="">全部</option>
-								<!-- TODO 回显数据 -->
+                                <option th:each="s : ${sellers}" th:value="${s.sid}" th:text="${s.sname}"
+                                        th:selected="${s.sid} + '' == ${#strings.trim(param.sid)}"></option>
                             </select>
                         </div>
 
-
-                        <button type="submit" class="btn btn-sm btn-default">查询</button>
-                        <button type="button" class="btn btn-sm btn-default"
-                                onclick="location.href='/admin/route/toadd'">添加
+                        <button type="submit" class="btn btn-sm btn-info">查询</button>
+                        <input type="reset" value="重置" class="btn btn-sm btn-warning">
+                        <button type="button" class="btn btn-sm btn-success"
+                                onclick="location.href='/admin/route/toAdd'">添加
                         </button>
+                        <button type="button" class="btn btn-sm btn-danger" id="btnDelete">删除</button>
                     </form>
                 </div>
 
+                <form action="/admin/route/delete" method="post" id="df">
+                    <table id="simple-table" class="table  table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th><input type="checkbox" id="checkAll"></th>
+                            <th>编号</th>
+                            <th>线路名称</th>
+                            <th>所属分类</th>
+                            <th>旅游公司</th>
+                            <th>价格</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
 
-                <table id="simple-table" class="table  table-bordered table-hover">
-                    <thead>
-                    <tr>
-                        <th><input type="checkbox" id="checkAll"></th>
-                        <th>编号</th>
-                        <th>线路名称</th>
-                        <th>所属分类</th>
-                        <th>旅游公司</th>
-                        <th>价格</th>
-                        <th>操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
+                        <tr th:each="r, status : ${page.list}" th:style="${status.even} ? 'background-color: #97D9E1'">
+                            <td><input type="checkbox" name="ids" th:value="${r.rid}"></td>
+                            <td th:text="${r.rid}"></td>
+                            <td th:text="${#strings.abbreviate(r.rname, 30)}"></td>
+                            <td th:text="${r.category.cname}"></td>
+                            <td th:text="${r.seller.sname}"></td>
+                            <td th:text="${r.price}"></td>
+                            <td>
+                                <div class="hidden-sm hidden-xs btn-group">
+                                    <a class="btn btn-xs btn-info" th:href="|/admin/route/toUpdate/${r.rid}|">
+                                        <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                    </a>
 
-                    <tr th:each="u: ${page.list}">
-                        <td><input type="checkbox" name="ids" th:value="${u.rid}"></td>
-                        <td th:text="${u.rid}"></td>
-						<!-- TODO 30个字符串以上显示... -->
-                        <td></td>
-                        <td th:text="${u.category.cname}"></td>
-                        <td th:text="${u.seller.sname}"></td>
-                        <td th:text="${u.price}"></td>
-                        <td>
+                                    <a class="btn btn-xs btn-info" th:href="|/admin/route/delete/${r.rid}|">
+                                        <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                    </a>
 
-                            <div class="hidden-sm hidden-xs btn-group">
-                                <button class="btn btn-xs btn-info"
-                                        th:onclick="|location.href = '/admin/route/toupdate?id=${u.rid}'|">
-                                    <i class="ace-icon fa fa-pencil bigger-120"></i>
-                                </button>
-
-                                <button class="btn btn-xs btn-info"
-                                        th:onclick="|location.href = '/admin/route/delete?id=${u.rid}'|">
-                                    <i class="ace-icon fa fa-trash-o bigger-120"></i>
-                                </button>
-
-                                <button class="btn btn-xs btn-success"
-                                        th:onclick="|location.href = '/admin/route/toimage?id=${u.rid}'|">
-                                    <i class="ace-icon fa fa-image bigger-120"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    </tbody>
-                </table>
+                                    <a class="btn btn-xs btn-success" th:href="|/admin/route/toImage/${r.rid}|">
+                                        <i class="ace-icon fa fa-image bigger-120"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
 
                 <div>
                     <nav aria-label="Page navigation">
@@ -228,14 +241,77 @@
                         </ul>
                     </nav>
                 </div>
-					<!-- TODO 分页js -->
-				
-	
+                <script th:inline="javascript">
+                    $(function () {
+                        // 通过内联JS得到分页相关数据
+                        // 当前页
+                        let pageNum = [[${page.pageNum}]];
+                        // 总页数
+                        let pageCount = [[${page.pages}]];
+                        // True - 有下一页
+                        let hasNextPage = [[${page.hasNextPage}]];
+                        // True - 有上一页
+                        let hasPreviousPage = [[${page.hasPreviousPage}]];
+
+                        // 按钮事件
+                        $("#next").click(function () {
+                            if (!$("#next").hasClass("disabled")) {
+                                $("#pageNum").val(pageNum + 1);
+                                $("#qf").submit();
+                            }
+                        });
+
+                        $("#prev").click(function () {
+                            if (!$("#prev").hasClass("disabled")) {
+                                $("#pageNum").val(pageNum - 1);
+                                $("#qf").submit();
+                            }
+                        });
+
+                        $("#first").click(function () {
+                            if (!$("#first").hasClass("disabled")) {
+                                $("#pageNum").val(1);
+                                $("#qf").submit();
+                            }
+                        });
+
+                        $("#last").click(function () {
+                            if (!$("#last").hasClass("disabled")) {
+                                $("#pageNum").val(pageCount);
+                                $("#qf").submit();
+                            }
+                        });
+
+                        // 点击页面跳转
+                        $("li[name = 'pageNum']").click(function () {
+                            if (!$(this).hasClass("active")) {
+                                $("#pageNum").val($(this).children("a").html());
+                                $("#qf").submit();
+                            }
+                        });
+
+                        // 设置每页行数
+                        $("#setRows").change(function () {
+                            $("#pageSize").val($(this).val());
+                            $("#pageNum").val(1);
+                            $("#qf").submit();
+                        });
+
+                        // 控制按钮状态
+                        if (!hasNextPage) {
+                            $("#last").addClass("disabled");
+                            $("#next").addClass("disabled");
+                        }
+
+                        if (!hasPreviousPage) {
+                            $("#first").addClass("disabled");
+                            $("#prev").addClass("disabled");
+                        }
+                    });
+                </script>
             </div><!-- /.page-content -->
         </div>
     </div><!-- /.main-content -->
-
 </div><!-- /.main-container -->
-
 </body>
 </html>

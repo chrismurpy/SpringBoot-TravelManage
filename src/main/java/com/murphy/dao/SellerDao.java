@@ -3,6 +3,7 @@ package com.murphy.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.murphy.domain.Seller;
 import com.murphy.domain.User;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -20,4 +21,7 @@ public interface SellerDao extends BaseMapper<Seller> {
      * @return
      */
     public List<Seller> selectByNameAndAddress(Seller seller);
+
+    @Select("select * from tab_seller where sid = #{id}")
+    Seller findById(Integer id);
 }
