@@ -157,7 +157,7 @@
                         <tr th:each="u, status : ${page.list}" th:style="${status.even} ? 'background-color: #97D9E1'">
                             <td><input type="checkbox" name="ids" th:value="${u.uid}"/></td>
                             <td th:text="${u.uid}">Uid</td>
-                            <td th:text="${u.name}">name</td>
+                            <td th:text="${u.username}">username</td>
                             <td th:text="${u.sex}">Sex</td>
                             <td th:text="${#dates.format(u.birthday, 'yyyy-MM-dd')}">Birthday</td>
                             <td th:text="${u.telephone}">Telephone</td>
